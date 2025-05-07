@@ -1,0 +1,48 @@
+<div class="editor-container">
+  <h2>Edit Image</h2>
+  
+  <div class="editor-content">
+    <image-cropper
+      [imageURL]="data.imageUrl"
+      [maintainAspectRatio]="true"
+      [aspectRatio]="4/3"
+      [resizeToWidth]="800"
+      format="png"
+      [roundCropper]="false"
+      [canvasRotation]="rotation"
+      [transform]="transform"
+      [alignImage]="'center'"
+      (imageCropped)="imageCropped($event)"
+      (loadImageFailed)="loadImageFailed()"
+      (imageLoaded)="imageLoaded()"
+    ></image-cropper>
+
+    <div class="editor-controls">
+      <button mat-icon-button (click)="rotateLeft()" matTooltip="Rotate Left">
+        <mat-icon>rotate_left</mat-icon>
+      </button>
+      <button mat-icon-button (click)="rotateRight()" matTooltip="Rotate Right">
+        <mat-icon>rotate_right</mat-icon>
+      </button>
+      <button mat-icon-button (click)="flipHorizontal()" matTooltip="Flip Horizontal">
+        <mat-icon>flip</mat-icon>
+      </button>
+      <button mat-icon-button (click)="flipVertical()" matTooltip="Flip Vertical">
+        <mat-icon style="transform: rotate(90deg)">flip</mat-icon>
+      </button>
+      <button mat-icon-button (click)="downloadEditedImage()" color="primary" matTooltip="Download" [disabled]="!croppedImage?.blob">
+        <mat-icon>download</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="editor-footer">
+    <mat-checkbox [(ngModel)]="saveAsNew">Save as new image</mat-checkbox>
+    <div class="action-buttons">
+      <button mat-button (click)="cancel()">Cancel</button>
+      <button mat-raised-button color="primary" (click)="save()" [disabled]="!croppedImage?.blob">
+        {{ saveAsNew ? 'Save as New' : 'Save' }}
+      </button>
+    </div>
+  </div>
+</div> 

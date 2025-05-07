@@ -1,0 +1,41 @@
+<div class="gallery-container">
+  <div class="main-grid">
+    <div class="viewer-container" [class.has-image]="selectedImage">
+      <div *ngIf="!selectedImage" class="placeholder-content">
+        <mat-icon>image</mat-icon>
+        <p>Select a DICOM image to view</p>
+        <input
+          type="file"
+          #fileInput
+          style="display: none"
+          (change)="onFileSelected($event)"
+          accept=".dcm,application/dicom"
+          multiple
+        />
+        <button mat-raised-button color="primary" (click)="fileInput.click()">
+          Upload DICOM Images
+        </button>
+      </div>
+      <app-dicom-viewer 
+        *ngIf="selectedImage" 
+        [selectedImage]="selectedImage">
+      </app-dicom-viewer>
+    </div>
+  </div>
+
+  <div class="side-panel">
+    <h3>DICOM Images</h3>
+    <div class="image-list">
+      <div class="thumbnail-container" *ngFor="let image of allImages">
+        <div class="thumbnail-box" 
+             [class.selected]="selectedImage?.id === image.id"
+             (click)="selectImage(image)">
+          <div class="image-name">{{image.name}}</div>
+          <button mat-icon-button class="delete-button" (click)="$event.stopPropagation(); deleteImage(image)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,187 @@
+<div class="dicom-container">
+  <div class="viewer-header">
+    <span class="header-title">DICOM Viewer</span>
+  </div>
+  
+  <!-- Zoom controls moved here, between header and canvas -->
+  <div class="zoom-controls-bar">
+    <div class="zoom-controls-container">
+      <button mat-raised-button (click)="zoomIn()" [disabled]="!isImageLoaded" class="zoom-btn">
+        <mat-icon>zoom_in</mat-icon> Zoom In
+      </button>
+      <button mat-raised-button (click)="zoomOut()" [disabled]="!isImageLoaded" class="zoom-btn">
+        <mat-icon>zoom_out</mat-icon> Zoom Out
+      </button>
+      <button mat-raised-button (click)="resetView()" [disabled]="!isImageLoaded" class="zoom-btn">
+        <mat-icon>restart_alt</mat-icon> Reset
+      </button>
+      <button mat-raised-button (click)="toggleMetadata()" [disabled]="!dicomMetadata" class="zoom-btn metadata-btn" [class.active]="showMetadata">
+        <mat-icon>info</mat-icon> Metadata
+      </button>
+    </div>
+  </div>
+  
+  <div #dicomContainer class="viewer-canvas">
+    <div *ngIf="isLoading" class="loading-indicator">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading DICOM image...</p>
+    </div>
+    <div *ngIf="loadError" class="error-overlay">
+      <mat-icon color="warn">error</mat-icon>
+      <p>{{loadError}}</p>
+      <button mat-raised-button color="primary" (click)="retryLoad()">
+        Try Again
+      </button>
+    </div>
+  </div>
+  
+  <mat-card class="dicom-metadata" *ngIf="dicomMetadata && showMetadata">
+    <mat-card-header>
+      <mat-card-title>DICOM Metadata</mat-card-title>
+      <button mat-icon-button class="close-metadata" (click)="toggleMetadata()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="metadata-section">
+        <h3>Patient Information</h3>
+        <div class="metadata-row">
+          <span class="metadata-label">Patient Name:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.patientName">
+            {{dicomMetadata.patientName || 'Not available'}}
+          </span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Patient ID:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.patientId">
+            {{dicomMetadata.patientId || 'Not available'}}
+          </span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Date of Birth:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.patientBirthDate">
+            {{dicomMetadata.patientBirthDate || 'Not available'}}
+          </span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Sex:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.patientSex">
+            {{dicomMetadata.patientSex || 'Not available'}}
+          </span>
+        </div>
+      </div>
+
+      <div class="metadata-section">
+        <h3>Modality Information</h3>
+        <div class="metadata-row">
+          <span class="metadata-label">Modality:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.modality">
+            {{dicomMetadata.modality || 'Not available'}}
+          </span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Rows:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.rows">
+            {{dicomMetadata.rows || 'Not available'}}
+          </span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Columns:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.columns">
+            {{dicomMetadata.columns || 'Not available'}}
+          </span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Image Type:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.imageType">
+            {{dicomMetadata.imageType || 'Not available'}}
+          </span>
+        </div>
+      </div>
+
+      <div class="metadata-section">
+        <h3>Study Information</h3>
+        <div class="metadata-row">
+          <span class="metadata-label">Study ID:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.studyId">
+            {{dicomMetadata.studyId || 'Not available'}}
+          </span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Study Instance UID:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.studyInstanceUid" 
+                title="{{dicomMetadata.studyInstanceUid || 'Not available'}}">
+            {{dicomMetadata.studyInstanceUid || 'Not available'}}
+          </span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Study Date:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.studyDate">
+            {{dicomMetadata.studyDate || 'Not available'}}
+          </span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Study Time:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.studyTime">
+            {{dicomMetadata.studyTime || 'Not available'}}
+          </span>
+        </div>
+      </div>
+
+      <div class="metadata-section">
+        <h3>Series Information</h3>
+        <div class="metadata-row">
+          <span class="metadata-label">Series Instance UID:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.seriesInstanceUid"
+                title="{{dicomMetadata.seriesInstanceUid || 'Not available'}}">
+            {{dicomMetadata.seriesInstanceUid || 'Not available'}}
+          </span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Series Number:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.seriesNumber">
+            {{dicomMetadata.seriesNumber || 'Not available'}}
+          </span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Series Description:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.seriesDescription">
+            {{dicomMetadata.seriesDescription || 'Not available'}}
+          </span>
+        </div>
+      </div>
+
+      <div class="metadata-section">
+        <h3>Anatomical Information</h3>
+        <div class="metadata-row">
+          <span class="metadata-label">Body Part:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.bodyPart">
+            {{dicomMetadata.bodyPart || 'Not available'}}
+          </span>
+        </div>
+      </div>
+
+      <div class="metadata-section">
+        <h3>Image Information</h3>
+        <div class="metadata-row">
+          <span class="metadata-label">Instance Number:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.instanceNumber">
+            {{dicomMetadata.instanceNumber || 'Not available'}}
+          </span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Window Center:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.windowCenter">
+            {{dicomMetadata.windowCenter || 'Not available'}}
+          </span>
+        </div>
+        <div class="metadata-row">
+          <span class="metadata-label">Window Width:</span>
+          <span class="metadata-value" [class.empty-value]="!dicomMetadata.windowWidth">
+            {{dicomMetadata.windowWidth || 'Not available'}}
+          </span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div> 

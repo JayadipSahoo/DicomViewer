@@ -1,0 +1,48 @@
+<div class="upload-container">
+  <h2>DICOM Image Upload</h2>
+  <div class="upload-section">
+    <input
+      #fileInput
+      type="file"
+      [multiple]="true"
+      accept=".dcm,application/dicom"
+      (change)="handleFileSelection($event)"
+      style="display: none"
+    >
+    <button mat-raised-button color="primary" (click)="fileInput.click()" [disabled]="loading">
+      <mat-icon>upload_file</mat-icon>
+      Select DICOM Files
+    </button>
+    
+    <p class="or-divider">OR</p>
+    
+    <input
+      #folderInput
+      type="file"
+      [multiple]="true"
+      webkitdirectory
+      (change)="handleFolderSelection($event)"
+      style="display: none"
+    >
+    <button mat-raised-button color="primary" (click)="folderInput.click()" [disabled]="loading">
+      <mat-icon>create_new_folder</mat-icon>
+      Select DICOM Folder
+    </button>
+  </div>
+  <div class="loading-indicator" *ngIf="loading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading DICOM files...</p>
+  </div>
+  <div class="error-message" *ngIf="error">
+    {{ error }}
+  </div>
+  <div class="help-text">
+    <h3>Instructions:</h3>
+    <ol>
+      <li>Click "Select DICOM Files" to choose individual .dcm files</li>
+      <li>OR click "Select DICOM Folder" to choose a folder containing your DICOM files</li>
+      <li>DICOM files will be processed and available for viewing in the Gallery</li>
+      <li>Click on any DICOM image in the Gallery to view in the Cornerstone viewer</li>
+    </ol>
+  </div>
+</div>
